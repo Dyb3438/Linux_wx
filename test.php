@@ -11,8 +11,8 @@ $userid=array();
 
 $http_worker->onConnect=function($connection){
     global $userid;
-    if(!in_array($connection->getRemoteIp(),$userid)){
-        array_push($userid,$connection->getRemoteIp());
+    if(!in_array($connection->id,$userid)){
+        array_push($userid,$connection->id);
     }
     print_r($userid);
 };
