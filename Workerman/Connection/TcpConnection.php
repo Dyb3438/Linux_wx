@@ -254,6 +254,31 @@ class TcpConnection extends ConnectionInterface
         self::STATUS_CLOSED      => 'CLOSED',
     );
 
+
+    /**
+     * Adding support of custom functions within protocols
+     *
+     * @param string $name
+     * @param array  $arguments
+     */
+    public function __call($name, $arguments) {
+        // Try to emit custom function within protocol
+        if (method_exists($this->protocol, $name)) {
+            try {
+                return call_user_func(array($this->protocol, $name), $this, $arguments);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+	} else {
+	    trigger_error('Call to undefined method '.__CLASS__.'::'.$name.'()', E_USER_ERROR);
+	}
+
+    }
+
     /**
      * Construct.
      *
@@ -527,6 +552,8 @@ class TcpConnection extends ConnectionInterface
         }
     }
 
+
+
     /**
      * Base read handler.
      *
@@ -538,34 +565,14 @@ class TcpConnection extends ConnectionInterface
     {
         // SSL handshake.
         if ($this->transport === 'ssl' && $this->_sslHandshakeCompleted !== true) {
-            $ret = stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_SSLv2_SERVER |
-                STREAM_CRYPTO_METHOD_SSLv3_SERVER | STREAM_CRYPTO_METHOD_SSLv23_SERVER);
-            // Negotiation has failed.
-            if(false === $ret) {
-                if (!feof($socket)) {
-                    echo "\nSSL Handshake fail. \nBuffer:".bin2hex(fread($socket, 8182))."\n";
+            if ($this->doSslHandshake($socket)) {
+                $this->_sslHandshakeCompleted = true;
+                if ($this->_sendBuffer) {
+                    Worker::$globalEvent->add($socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
                 }
-                return $this->destroy();
-            } elseif(0 === $ret) {
-                // There isn't enough data and should try again.
+            } else {
                 return;
             }
-            if (isset($this->onSslHandshake)) {
-                try {
-                    call_user_func($this->onSslHandshake, $this);
-                } catch (\Exception $e) {
-                    Worker::log($e);
-                    exit(250);
-                } catch (\Error $e) {
-                    Worker::log($e);
-                    exit(250);
-                }
-            }
-            $this->_sslHandshakeCompleted = true;
-            if ($this->_sendBuffer) {
-                Worker::$globalEvent->add($socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
-            }
-            return;
         }
 
         $buffer = @fread($socket, self::READ_BUFFER_SIZE);
@@ -676,7 +683,7 @@ class TcpConnection extends ConnectionInterface
             $this->bytesWritten += $len;
             Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
             $this->_sendBuffer = '';
-            // Try to emit onBufferDrain callback when the send buffer becomes empty. 
+            // Try to emit onBufferDrain callback when the send buffer becomes empty.
             if ($this->onBufferDrain) {
                 try {
                     call_user_func($this->onBufferDrain, $this);
@@ -700,6 +707,49 @@ class TcpConnection extends ConnectionInterface
             self::$statistics['send_fail']++;
             $this->destroy();
         }
+    }
+
+    /**
+     * SSL handshake.
+     *
+     * @param $socket
+     * @return bool
+     */
+    public function doSslHandshake($socket){
+        if (feof($socket)) {
+            $this->destroy();
+            return false;
+        }
+        $async=$this instanceof AsyncTcpConnection;
+        if($async){
+            $type=STREAM_CRYPTO_METHOD_SSLv2_CLIENT | STREAM_CRYPTO_METHOD_SSLv23_CLIENT;
+        }else{
+            $type=STREAM_CRYPTO_METHOD_SSLv2_SERVER | STREAM_CRYPTO_METHOD_SSLv23_SERVER;
+        }
+        $ret = stream_socket_enable_crypto($socket, true, $type);
+        // Negotiation has failed.
+        if (false === $ret) {
+            if (!feof($socket)) {
+                echo "\nSSL Handshake fail as ".($async?'client':'server').". \nBuffer:".bin2hex(fread($socket, 8182))."\n";
+            }
+            $this->destroy();
+            return false;
+        } elseif (0 === $ret) {
+            // There isn't enough data and should try again.
+            return false;
+        }
+        if (isset($this->onSslHandshake)) {
+            try {
+                call_user_func($this->onSslHandshake, $this);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+        }
+        return true;
     }
 
     /**
@@ -814,6 +864,16 @@ class TcpConnection extends ConnectionInterface
         }
         return false;
     }
+    
+    /**
+     * Whether send buffer is Empty.
+     *
+     * @return bool
+     */
+    public function bufferIsEmpty()
+    {
+    	return empty($this->_sendBuffer);
+    }
 
     /**
      * Destroy connection.
@@ -831,11 +891,6 @@ class TcpConnection extends ConnectionInterface
         Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
         // Close socket.
         @fclose($this->_socket);
-        // Remove from worker->connections.
-        if ($this->worker) {
-            unset($this->worker->connections[$this->_id]);
-        }
-        unset(static::$connections[$this->_id]);
         $this->_status = self::STATUS_CLOSED;
         // Try to emit onClose callback.
         if ($this->onClose) {
@@ -850,7 +905,7 @@ class TcpConnection extends ConnectionInterface
             }
         }
         // Try to emit protocol::onClose
-        if (method_exists($this->protocol, 'onClose')) {
+        if ($this->protocol && method_exists($this->protocol, 'onClose')) {
             try {
                 call_user_func(array($this->protocol, 'onClose'), $this);
             } catch (\Exception $e) {
@@ -864,6 +919,11 @@ class TcpConnection extends ConnectionInterface
         if ($this->_status === self::STATUS_CLOSED) {
             // Cleaning up the callback to avoid memory leaks.
             $this->onMessage = $this->onClose = $this->onError = $this->onBufferFull = $this->onBufferDrain = null;
+            // Remove from worker->connections.
+            if ($this->worker) {
+                unset($this->worker->connections[$this->_id]);
+            }
+            unset(static::$connections[$this->_id]);
         }
     }
 
@@ -874,6 +934,20 @@ class TcpConnection extends ConnectionInterface
      */
     public function __destruct()
     {
+        static $mod;
         self::$statistics['connection_count']--;
+        if (Worker::getGracefulStop()) {
+            if (!isset($mod)) {
+                $mod = ceil((self::$statistics['connection_count'] + 1) / 3);
+            }
+
+            if (0 === self::$statistics['connection_count'] % $mod) {
+                Worker::log('worker[' . posix_getpid() . '] remains ' . self::$statistics['connection_count'] . ' connection(s)');
+            }
+
+            if(0 === self::$statistics['connection_count']) {
+                Worker::stopAll();
+            }
+        }
     }
 }

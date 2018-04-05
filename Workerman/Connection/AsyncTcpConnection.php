@@ -137,6 +137,9 @@ class AsyncTcpConnection extends TcpConnection
         }
 
         $this->id = $this->_id = self::$_idRecorder++;
+        if(PHP_INT_MAX === self::$_idRecorder){
+            self::$_idRecorder = 0;
+        }
         // Check application layer protocol class.
         if (!isset(self::$_builtinTransports[$scheme])) {
             $scheme         = ucfirst($scheme);
@@ -153,31 +156,36 @@ class AsyncTcpConnection extends TcpConnection
 
         // For statistics.
         self::$statistics['connection_count']++;
-        $this->maxSendBufferSize        = self::$defaultMaxSendBufferSize;
-        $this->_contextOption           = $context_option;
-        static::$connections[$this->id] = $this;
+        $this->maxSendBufferSize         = self::$defaultMaxSendBufferSize;
+        $this->_contextOption            = $context_option;
+        static::$connections[$this->_id] = $this;
     }
 
     /**
      * Do connect.
      *
-     * @return void 
+     * @return void
      */
     public function connect()
     {
         if ($this->_status !== self::STATUS_INITIAL && $this->_status !== self::STATUS_CLOSING &&
-             $this->_status !== self::STATUS_CLOSED) {
+            $this->_status !== self::STATUS_CLOSED) {
             return;
         }
         $this->_status           = self::STATUS_CONNECTING;
         $this->_connectStartTime = microtime(true);
-        // Open socket connection asynchronously.
-        if ($this->_contextOption) {
-            $context = stream_context_create($this->_contextOption);
-            $this->_socket = stream_socket_client("{$this->transport}://{$this->_remoteHost}:{$this->_remotePort}", $errno, $errstr, 0,
-                STREAM_CLIENT_ASYNC_CONNECT, $context);
+        if ($this->transport !== 'unix') {
+            // Open socket connection asynchronously.
+            if ($this->_contextOption) {
+                $context = stream_context_create($this->_contextOption);
+                $this->_socket = stream_socket_client("tcp://{$this->_remoteHost}:{$this->_remotePort}",
+                    $errno, $errstr, 0, STREAM_CLIENT_ASYNC_CONNECT, $context);
+            } else {
+                $this->_socket = stream_socket_client("tcp://{$this->_remoteHost}:{$this->_remotePort}",
+                    $errno, $errstr, 0, STREAM_CLIENT_ASYNC_CONNECT);
+            }
         } else {
-            $this->_socket = stream_socket_client("{$this->transport}://{$this->_remoteHost}:{$this->_remotePort}", $errno, $errstr, 0,
+            $this->_socket = stream_socket_client("{$this->transport}://{$this->_remoteAddress}", $errno, $errstr, 0,
                 STREAM_CLIENT_ASYNC_CONNECT);
         }
         // If failed attempt to emit onError callback.
@@ -191,7 +199,7 @@ class AsyncTcpConnection extends TcpConnection
             }
             return;
         }
-        // Add socket to global event loop waiting connection is successfully established or faild. 
+        // Add socket to global event loop waiting connection is successfully established or faild.
         Worker::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'checkConnection'));
         // For windows.
         if(DIRECTORY_SEPARATOR === '\\') {
@@ -206,7 +214,8 @@ class AsyncTcpConnection extends TcpConnection
      * @return void
      */
     public function reConnect($after = 0) {
-        $this->_status = self::STATUS_INITIAL;
+        $this->_status                   = self::STATUS_INITIAL;
+        static::$connections[$this->_id] = $this;
         if ($this->_reconnectTimer) {
             Timer::del($this->_reconnectTimer);
         }
@@ -220,7 +229,7 @@ class AsyncTcpConnection extends TcpConnection
     /**
      * Get remote address.
      *
-     * @return string 
+     * @return string
      */
     public function getRemoteHost()
     {
@@ -272,10 +281,9 @@ class AsyncTcpConnection extends TcpConnection
         if(DIRECTORY_SEPARATOR === '\\') {
             Worker::$globalEvent->del($socket, EventInterface::EV_EXCEPT);
         }
+
         // Check socket state.
         if ($address = stream_socket_get_name($socket, true)) {
-            // Remove write listener.
-            Worker::$globalEvent->del($socket, EventInterface::EV_WRITE);
             // Nonblocking.
             stream_set_blocking($socket, 0);
             // Compatible with hhvm
@@ -288,15 +296,25 @@ class AsyncTcpConnection extends TcpConnection
                 socket_set_option($raw_socket, SOL_SOCKET, SO_KEEPALIVE, 1);
                 socket_set_option($raw_socket, SOL_TCP, TCP_NODELAY, 1);
             }
+
+            // Remove write listener.
+            Worker::$globalEvent->del($socket, EventInterface::EV_WRITE);
+
+            // SSL handshake.
+            if ($this->transport === 'ssl') {
+                $this->_sslHandshakeCompleted = $this->doSslHandshake($socket);
+            } else {
+                // There are some data waiting to send.
+                if ($this->_sendBuffer) {
+                    Worker::$globalEvent->add($socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
+                }
+            }
+
             // Register a listener waiting read event.
             Worker::$globalEvent->add($socket, EventInterface::EV_READ, array($this, 'baseRead'));
-            // There are some data waiting to send.
-            if ($this->_sendBuffer) {
-                Worker::$globalEvent->add($socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
-            }
+
             $this->_status                = self::STATUS_ESTABLISHED;
             $this->_remoteAddress         = $address;
-            $this->_sslHandshakeCompleted = true;
 
             // Try to emit onConnect callback.
             if ($this->onConnect) {

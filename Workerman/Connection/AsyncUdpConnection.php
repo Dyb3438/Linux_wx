@@ -23,6 +23,27 @@ use Exception;
 class AsyncUdpConnection extends UdpConnection
 {
     /**
+     * Emitted when socket connection is successfully established.
+     *
+     * @var callback
+     */
+    public $onConnect = null;
+
+    /**
+     * Emitted when socket connection closed.
+     *
+     * @var callback
+     */
+    public $onClose = null;
+
+    /**
+     * Connected or not.
+     *
+     * @var bool
+     */
+    protected $connected = false;
+
+    /**
      * Construct.
      *
      * @param string $remote_address
@@ -45,8 +66,6 @@ class AsyncUdpConnection extends UdpConnection
         }
         
         $this->_remoteAddress = substr($address, 2);
-        $this->_socket = stream_socket_client("udp://{$this->_remoteAddress}");
-        Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
     }
     
     /**
@@ -71,14 +90,36 @@ class AsyncUdpConnection extends UdpConnection
             try {
                 call_user_func($this->onMessage, $this, $recv_buffer);
             } catch (\Exception $e) {
-                self::log($e);
+                Worker::log($e);
                 exit(250);
             } catch (\Error $e) {
-                self::log($e);
+                Worker::log($e);
                 exit(250);
             }
         }
         return true;
+    }
+
+    /**
+     * Sends data on the connection.
+     *
+     * @param string $send_buffer
+     * @param bool   $raw
+     * @return void|boolean
+     */
+    public function send($send_buffer, $raw = false)
+    {
+        if (false === $raw && $this->protocol) {
+            $parser      = $this->protocol;
+            $send_buffer = $parser::encode($send_buffer, $this);
+            if ($send_buffer === '') {
+                return null;
+            }
+        }
+        if ($this->connected === false) {
+            $this->connect();
+        }
+        return strlen($send_buffer) === stream_socket_sendto($this->_socket, $send_buffer, 0);
     }
     
     
@@ -86,6 +127,8 @@ class AsyncUdpConnection extends UdpConnection
      * Close connection.
      *
      * @param mixed $data
+     * @param bool $raw
+     *
      * @return bool
      */
     public function close($data = null, $raw = false)
@@ -95,7 +138,50 @@ class AsyncUdpConnection extends UdpConnection
         }
         Worker::$globalEvent->del($this->_socket, EventInterface::EV_READ);
         fclose($this->_socket);
+        $this->connected = false;
+        // Try to emit onClose callback.
+        if ($this->onClose) {
+            try {
+                call_user_func($this->onClose, $this);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+        }
+        $this->onConnect = $this->onMessage = $this->onClose = null;
         return true;
     }
-    
+
+    /**
+     * Connect.
+     *
+     * @return void
+     */
+    public function connect()
+    {
+        if ($this->connected === true) {
+            return;
+        }
+        $this->_socket = stream_socket_client("udp://{$this->_remoteAddress}");
+        if ($this->onMessage) {
+            Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
+        }
+        $this->connected = true;
+        // Try to emit onConnect callback.
+        if ($this->onConnect) {
+            try {
+                call_user_func($this->onConnect, $this);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+        }
+    }
+
 }
