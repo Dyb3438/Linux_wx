@@ -1,0 +1,68 @@
+2018-04-02 14:03:44 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '\xE6\xB3\x95\xE6\x92\x92\xE6\x97\xA6\xE5\x8F\x91\xE5\xB0\x84...')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '\xE6\xB3\x95\xE6\x92\x92\xE6\x97\xA6\xE5\x8F\x91\xE5\xB0\x84...')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#7 D:\DEMO\Linux\Linux_wx\test.php(26): Workerman\Worker::runAll()
+#8 {main}
+2018-04-02 14:21:52 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:26
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '123,456')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '123,456')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #35)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#7 D:\DEMO\Linux\Linux_wx\test.php(29): Workerman\Worker::runAll()
+#8 {main}
+2018-04-02 14:46:54 Error: Cannot use object of type Workerman\Connection\TcpConnection as array in D:\DEMO\Linux\Linux_wx\test.php:21
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '27777873,\xE8\x8B\x8F\xE6\xB0\xB8...')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '27777873,\xE8\x8B\x8F\xE6\xB0\xB8...')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #20)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#7 D:\DEMO\Linux\Linux_wx\test.php(37): Workerman\Worker::runAll()
+#8 {main}
+2018-04-02 16:09:59 Error: Cannot use object of type Workerman\Worker as array in D:\DEMO\Linux\Linux_wx\test.php:28
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), 'fsafsf')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), 'fsafsf')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#7 D:\DEMO\Linux\Linux_wx\test.php(36): Workerman\Worker::runAll()
+#8 {main}
+2018-04-02 16:10:30 Error: Cannot use object of type Workerman\Worker as array in D:\DEMO\Linux\Linux_wx\test.php:28
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), 'fsdafdsf')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), 'fsdafdsf')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#7 D:\DEMO\Linux\Linux_wx\test.php(36): Workerman\Worker::runAll()
+#8 {main}
+2018-04-03 00:26:45 Exception: You can't send(array) to client, you need to convert it to a string.  in D:\DEMO\Linux\Linux_wx\Workerman\Protocols\Websocket.php:225
+Stack trace:
+#0 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(313): Workerman\Protocols\Websocket::encode(Array, Object(Workerman\Connection\TcpConnection))
+#1 D:\DEMO\Linux\Linux_wx\test.php(31): Workerman\Connection\TcpConnection->send(Array)
+#2 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), Array)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(632): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '\xE5\x8F\x91\xE5\xA3\xAB\xE5\xA4\xA7\xE5\xA4\xAB')
+#4 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(856): Workerman\Events\Select->loop()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(473): Workerman\Worker->run()
+#8 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(382): Workerman\Worker::runAllWorkers()
+#9 D:\DEMO\Linux\Linux_wx\test.php(37): Workerman\Worker::runAll()
+#10 {main}
