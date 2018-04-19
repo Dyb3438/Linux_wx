@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预约系统</title>
+</head>
+<style>
+    *{
+        position:relative;
+        border:0px;
+        margin:0px;
+        padding:0px;
+    }
+    .background{
+        position:relative;
+        border:black 5px solid;
+        height:600px;
+    }
+    .title{
+        margin-top:50px;
+        text-align:center;
+        color:green;
+        font-size:36px;
+        font-weight:800;
+        font-family:"宋体";
+    }
+    .contain{
+        margin-top:50px;
+        font-size:26px;
+        font-weight:500;
+        font-family:"宋体";
+        text-align:left;
+    }
+    .row{
+        margin-top:20px;
+        text-align:right;
+    }
+    .input{
+        margin-right:37%;
+        resize: none;
+        border:black 1px solid;
+        display: inline-block;
+        width:20%;
+        height:26px;
+        font-size:23px;
+        overflow-y:hidden;
+        overflow-x:auto;
+    }
+    .button{
+        margin-top:30px;
+        text-align:center;
+    }
+    .submit{
+        width:25%;
+        height:50px;
+        font-size:40px;
+        color:blue;
+        background-color:#b8f864;
+        border:2px solid;
+        border-radius:15px;
+        border-color: rgb(169, 169, 169);
+    }
+</style>
+<body>
+<div class="background">
+    <div display="none">
+        <div class="title">
+            <t1 class="t1">预约系统</t1>
+        </div>
+        <div class="contain">
+            <div class="row">
+                <span style="color:red">姓名：</span>
+                <textarea class="input" id="name"></textarea>
+            </div>
+            <div class="row">
+                <span style="color:red">电话号码：</span>
+                <textarea class="input" placeholder="用于绑定身份" id="tel"></textarea>
+            </div>
+            <div class="row">
+                <span style="color:red">邮箱地址：</span>
+                <textarea class="input" placeholder="用于接收赛后结果" id="email"></textarea>
+            </div>
+            <div class="row">
+                <div class="button">
+                    <input type="button"class="submit" value="预约" onclick="submit()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    ws = new WebSocket("ws://127.0.0.1:2000");
+    ws.onopen = function () {
+        alert("连接成功!");
+    };
+    ws.onmessage = function (e) {
+        alert(e.data);
+    };
+    function submit() {
+        var name = document.getElementById('name').value;
+        var tel = document.getElementById('tel').value;
+        var email = document.getElementById('email').value;
+        var array=[name,tel,email];
+        var data = JSON.stringify(array);
+        ws.send(data);
+    }
+</script>
+</html>

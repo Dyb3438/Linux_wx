@@ -81,3 +81,96 @@ Stack trace:
 #9 D:\DEMO\Linux\Linux_wx\test.php(37): Workerman\Worker::runAll()
 #10 {main}
 >>>>>>> fd38a29f9458444d50d3aec7f20547c07549d6aa
+2018-04-19 00:29:10 pid:1 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["","",""]')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["","",""]')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(38): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 00:29:10 pid:1 Worker process terminated
+2018-04-19 00:29:38 pid:1 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["","",""]')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["","",""]')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(38): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 00:29:38 pid:1 Worker process terminated
+2018-04-19 12:57:52 pid:1 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["","",""]')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["","",""]')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(39): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 12:57:52 pid:1 Worker process terminated
+2018-04-19 12:58:19 pid:1 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["","",""]')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["","",""]')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(39): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 12:58:19 pid:1 Worker process terminated
+2018-04-19 13:00:35 pid:1 Error: Call to a member function send() on null in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["","",""]')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["","",""]')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(39): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 13:00:35 pid:1 Worker process terminated
+2018-04-19 13:04:13 pid:1 Exception: You can't send(array) to client, you need to convert it to a string.  in D:\DEMO\Linux\Linux_wx\Workerman\Protocols\Websocket.php:232
+Stack trace:
+#0 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(338): Workerman\Protocols\Websocket::encode(Array, Object(Workerman\Connection\TcpConnection))
+#1 D:\DEMO\Linux\Linux_wx\test.php(26): Workerman\Connection\TcpConnection->send(Array)
+#2 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '"[\\"\\u53d1\\u58e...')
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["\xE5\x8F\x91\xE5\xA3\xAB\xE5\xA4\xA7\xE5\xA4\xAB"...')
+#4 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#8 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#9 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#10 D:\DEMO\Linux\Linux_wx\test.php(38): Workerman\Worker::runAll()
+#11 {main}
+2018-04-19 13:04:13 pid:1 Worker process terminated
+2018-04-19 13:18:01 pid:1 Error: Call to undefined function explore() in D:\DEMO\Linux\Linux_wx\test.php:24
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["fsda","fsdafa...')
+#1 D:\DEMO\Linux\Linux_wx\Workerman\Connection\TcpConnection.php(639): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["fsda","fsdafa...')
+#2 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #17)
+#3 D:\DEMO\Linux\Linux_wx\Workerman\Events\Select.php(286): call_user_func_array(Array, Array)
+#4 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(2130): Workerman\Events\Select->loop()
+#5 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1189): Workerman\Worker->run()
+#6 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(1132): Workerman\Worker::forkWorkersForWindows()
+#7 D:\DEMO\Linux\Linux_wx\Workerman\Worker.php(466): Workerman\Worker::forkWorkers()
+#8 D:\DEMO\Linux\Linux_wx\test.php(39): Workerman\Worker::runAll()
+#9 {main}
+2018-04-19 13:18:01 pid:1 Worker process terminated
