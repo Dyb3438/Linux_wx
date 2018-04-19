@@ -53,6 +53,8 @@ $http_worker->onMessage = function($connection, $data)
             $http_worker->connections[$connection->id]->send("预约成功！");
         }
         print_r($jiekou);
+    }else{
+        print_R($jiekou);
     }
 };
 Worker::runAll();
