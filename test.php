@@ -17,13 +17,6 @@ $http_worker->onConnect=function($connection)
 $http_worker->onMessage = function($connection, $data)
 {
     global $http_worker,$jiekou,$userid;
-    if(is_array($jiekou)) {
-        foreach ($jiekou as $key => $value) {
-            if (!isset($http_worker->connections[$key])) {
-                unset($jiekou[$key]);
-            }
-        }
-    }
     if(!isset($jiekou[$connection->id])){
         $data =json_decode($data);
         $jiekou[$connection->id]=array("id"=>$connection->id,"name"=>$data[0],"tel"=>$data[1],"email"=>$data[2]);
@@ -57,4 +50,12 @@ $http_worker->onMessage = function($connection, $data)
         print_R($jiekou);
     }
 };
+$http_worker->onClose = function($connection)
+{
+    global $jiekou;
+    $close_id=$connection->id;
+    unset ($jiekou[$close_id]);
+    print_r($jiekou);
+};
+
 Worker::runAll();
